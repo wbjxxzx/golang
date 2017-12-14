@@ -3,8 +3,8 @@ package stackutil
 const MAXSIZE = 256
 
 type Stack struct {
-	arr [MAXSIZE]interface{}
-	top int
+	data [MAXSIZE]interface{}
+	top  int
 }
 type StackError string
 
@@ -32,15 +32,15 @@ func (s *Stack) Push(i interface{}) error {
 		return StackError("Stack is full")
 	}
 	s.top++
-	s.arr[s.top] = i
+	s.data[s.top] = i
 	return nil
 }
 func (s *Stack) Pop() (interface{}, error) {
 	if s.isEmpty() {
 		return nil, StackError("Stack is empty")
 	}
-	i := s.arr[s.top]
-	s.arr[s.top] = nil
+	i := s.data[s.top]
+	s.data[s.top] = nil
 	s.top--
 	return i, nil
 }
