@@ -29,7 +29,7 @@ func (s *Stack) isEmpty() bool {
 }
 func (s *Stack) Push(i interface{}) error {
 	if s.isFull() {
-		return StackError("Stack is full")
+		return StackError("Stack overflow")
 	}
 	s.top++
 	s.data[s.top] = i

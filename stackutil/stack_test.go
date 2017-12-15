@@ -1,6 +1,9 @@
 package stackutil
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 func TestNew(t *testing.T) {
 	s := New()
@@ -8,32 +11,42 @@ func TestNew(t *testing.T) {
 		t.Errorf("len(New()) == %q, want %q", len(s.data), MAXSIZE)
 	}
 }
-func TestPushPop(t *testing.T) {
-	s := New()
-	var i interface{}
-	n := 1
-	p := &n
-	s.Push(p)
-	s.Push(1)
-	s.Push("abc")
-	s.Push(struct{ int }{1})
-	if s.top != 3 {
-		t.Errorf("s.top = %q, want %q", s.top, 3)
+
+var s *Stack = &Stack{top: -1}
+var n int = 1
+var cases = []struct {
+	in, want interface{}
+}{
+	{1, 1},
+	{&n, &n},
+	{"abc", "abc"},
+	{struct{ int }{1}, struct{ int }{1}},
+}
+
+func TestPush(t *testing.T) {
+	for _, v := range cases {
+		err := s.Push(v.in)
+		if err != nil {
+			t.Error(err)
+		}
 	}
-	i, _ = s.Pop()
-	if i != struct{ int }{1} {
-		t.Errorf("s.Pop() = %q, want %q", i, struct{ int }{1})
+	if s.top != len(cases)-1 {
+		t.Errorf("s.top = %q, want %q", s.top, len(cases)-1)
 	}
-	i, _ = s.Pop()
-	if i != "abc" {
-		t.Errorf("s.Pop() = %q, want %q", i, "abc")
+}
+func TestPop(t *testing.T) {
+	data := make([]interface{}, 0)
+	for _, v := range cases {
+		data = append(data[:0], append([]interface{}{v.want}, data[0:]...)...)
+		fmt.Printf("%#v\n", data)
 	}
-	i, _ = s.Pop()
-	if i != 1 {
-		t.Errorf("s.Pop() = %q, want %q", i, 1)
-	}
-	i, _ = s.Pop()
-	if i != p {
-		t.Errorf("s.Pop() = %q, want %q", i, p)
+	for _, v := range data {
+		i, err := s.Pop()
+		if i != v {
+			t.Errorf("s.Pop() = %q, want %q", i, v)
+			if err != nil {
+				t.Error(err)
+			}
+		}
 	}
 }
